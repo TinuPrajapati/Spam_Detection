@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 export default function Spam() {
   const [message, setMessage] = useState("");
@@ -9,25 +10,14 @@ export default function Spam() {
     setLoading(true);
     setResult(null);
     try {
-        const response = await fetch("http://localhost:5000/api/classify", { // Ensure full URL
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setResult(data.category);
+      const response = await axios.post("http://localhost:5000/api/classify", { message });
+      setResult(response.data.category);
     } catch (error) {
-        console.error("Error classifying message:", error);
-        setResult("Error connecting to the API.");
+      console.error("Error classifying message:", error);
+      setResult("Error connecting to the API.");
     }
     setLoading(false);
-};
-
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: "#f4f4f4", padding: "20px" }}>
